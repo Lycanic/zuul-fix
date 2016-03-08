@@ -1,3 +1,5 @@
+
+import java.util.*;
 /**
  * Class Room - a room in an adventure game.
  *
@@ -12,13 +14,12 @@
  * @author  Michael Kölling and David J. Barnes
  * @version 2011.07.31
  */
+
+
 public class Room 
 {
-    public String description;
-    public Room northExit;
-    public Room southExit;
-    public Room eastExit;
-    public Room westExit;
+    private String description;
+    private HashMap<String,Room> exits;
 
     /**
      * Create a room described "description". Initially, it has
@@ -29,28 +30,45 @@ public class Room
     public Room(String description) 
     {
         this.description = description;
+        exits = new HashMap<String,Room>();
+    }
+    
+    /**
+     * Adds an exit to the room
+     */
+    public void addExit(String direction, Room destination){
+        exits.put(direction,destination);
     }
 
     /**
-     * Define the exits of this room.  Every direction either leads
-     * to another room or is null (no exit there).
-     * @param north The north exit.
-     * @param east The east east.
-     * @param south The south exit.
-     * @param west The west exit.
+     * @return the Room in the specified direction
      */
-    public void setExits(Room north, Room east, Room south, Room west) 
-    {
-        if(north != null)
-            northExit = north;
-        if(east != null)
-            eastExit = east;
-        if(south != null)
-            southExit = south;
-        if(west != null)
-            westExit = west;
+    public Room getExit(String direction){
+        if (exits.containsKey(direction)){
+            return exits.get(direction);
+        }
+        
+        return null;
     }
-
+    
+     /**
+     * Prints the description and directions for the current room
+     */
+    public String getExitString(){
+        String doors = "";
+        String split=System.lineSeparator();
+        doors="You are " + description;
+        doors=doors+split;
+        doors=doors+"Exits: ";
+        
+        for (String direction:exits.keySet()){
+            if(getExit(direction)!=null){
+                doors=doors+direction+" ";
+            }
+        }
+        return doors;
+    }
+    
     /**
      * @return The description of the room.
      */

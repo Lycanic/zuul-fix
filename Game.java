@@ -1,3 +1,5 @@
+import java.util.*;
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -34,7 +36,7 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room outside, theater, pub, lab, office, supply, toilet, attic, basement;
       
         // create the rooms
         outside = new Room("outside the main entrance of the university");
@@ -42,14 +44,37 @@ public class Game
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
+        supply = new Room("in the supply closet");
+        toilet = new Room("in the toilets");
+        attic = new Room("in the pub's attic");
+        basement = new Room("in the secret basement");
+        
         
         // initialise room exits
-        outside.setExits(null, theater, lab, pub);
-        theater.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        lab.setExits(outside, office, null, null);
-        office.setExits(null, null, null, lab);
-
+        outside.addExit("east", theater);
+        outside.addExit("south", lab);
+        outside.addExit("west", pub);
+        theater.addExit("west", outside);
+        pub.addExit("north", toilet);
+        pub.addExit("east",outside);
+        pub.addExit("up", attic);
+        lab.addExit("north",outside);
+        lab.addExit("east",office);
+        lab.addExit("south",supply);
+        office.addExit("west", lab); 
+        supply.addExit("north", lab);
+        supply.addExit("down", basement);
+        toilet.addExit("south", pub);  
+        attic.addExit("down", pub);      
+        basement.addExit("up", supply); 
+        
+                
+        //
+        //   [toi]
+        //[a][pub]  [out]   [the]
+        //          [lab]   [off]
+        //          [sup][b]
+        
         currentRoom = outside;  // start game outside
     }
 
@@ -81,21 +106,7 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println("You are " + currentRoom.getDescription());
-        System.out.print("Exits: ");
-        if(currentRoom.northExit != null) {
-            System.out.print("north ");
-        }
-        if(currentRoom.eastExit != null) {
-            System.out.print("east ");
-        }
-        if(currentRoom.southExit != null) {
-            System.out.print("south ");
-        }
-        if(currentRoom.westExit != null) {
-            System.out.print("west ");
-        }
-        System.out.println();
+        printLocationInfo();
     }
 
     /**
@@ -159,16 +170,22 @@ public class Game
         // Try to leave current room.
         Room nextRoom = null;
         if(direction.equals("north")) {
-            nextRoom = currentRoom.northExit;
+            nextRoom = currentRoom.getExit("north");
         }
         if(direction.equals("east")) {
-            nextRoom = currentRoom.eastExit;
+            nextRoom = currentRoom.getExit("east");
         }
         if(direction.equals("south")) {
-            nextRoom = currentRoom.southExit;
+            nextRoom = currentRoom.getExit("south");
         }
         if(direction.equals("west")) {
-            nextRoom = currentRoom.westExit;
+            nextRoom = currentRoom.getExit("west");
+        }
+        if(direction.equals("up")) {
+            nextRoom = currentRoom.getExit("up");
+        }
+        if(direction.equals("down")) {
+            nextRoom = currentRoom.getExit("down");
         }
 
         if (nextRoom == null) {
@@ -176,21 +193,25 @@ public class Game
         }
         else {
             currentRoom = nextRoom;
-            System.out.println("You are " + currentRoom.getDescription());
-            System.out.print("Exits: ");
-            if(currentRoom.northExit != null) {
-                System.out.print("north ");
-            }
-            if(currentRoom.eastExit != null) {
-                System.out.print("east ");
-            }
-            if(currentRoom.southExit != null) {
-                System.out.print("south ");
-            }
-            if(currentRoom.westExit != null) {
-                System.out.print("west ");
-            }
-            System.out.println();
+            printLocationInfo();
+        }
+    }
+    
+    /**
+     * Prints the description and directions for the current room
+     */
+    private void printLocationInfo(){
+        System.out.println(currentRoom.getExitString());
+    }
+    
+    /**
+     * A compression of the code in printLocationInfo
+     * prints out the direction given iff there is a room in that location
+     * Would preferably store a list of possible directions and just have printLoc loop through them
+     */
+    private void printIfExit(String direction){
+        if(currentRoom.getExit(direction) != null) {
+            System.out.print(direction+" ");
         }
     }
 
