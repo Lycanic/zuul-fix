@@ -14,11 +14,14 @@
  */
 public class Room 
 {
-    public String description;
-    public Room northExit;
-    public Room southExit;
-    public Room eastExit;
-    public Room westExit;
+    private String description;
+    private Room northExit;
+    private Room southExit;
+    private Room eastExit;
+    private Room westExit;
+    private Room upExit;
+    private Room downExit;
+    private static final String[] POSSIBLE_DIRECTIONS={"North","South","East","West","Up","Down"};
 
     /**
      * Create a room described "description". Initially, it has
@@ -38,8 +41,10 @@ public class Room
      * @param east The east east.
      * @param south The south exit.
      * @param west The west exit.
+     * @param up The upwards exit.
+     * @param down the downwards exit
      */
-    public void setExits(Room north, Room east, Room south, Room west) 
+    public void setExits(Room north, Room east, Room south, Room west, Room up, Room down) 
     {
         if(north != null)
             northExit = north;
@@ -49,8 +54,57 @@ public class Room
             southExit = south;
         if(west != null)
             westExit = west;
+        if(up != null)
+            upExit = up;
+        if(down != null)
+            downExit = down;
     }
 
+    /**
+     * @return the Room in the specified direction
+     */
+    public Room getExit(String direction){
+        if(direction.equalsIgnoreCase("north")){
+            return northExit;
+        }
+        if(direction.equalsIgnoreCase("south")){
+            return southExit;
+        }
+        if(direction.equalsIgnoreCase("east")){
+            return eastExit;
+        }
+        if(direction.equalsIgnoreCase("west")){
+            return westExit;
+        }
+        if(direction.equalsIgnoreCase("up")){
+            return upExit;
+        }
+        if(direction.equalsIgnoreCase("down")){
+            return downExit;
+        }
+        
+        return null;
+    }
+    
+     /**
+     * Prints the description and directions for the current room
+     */
+    public String getExitString(){
+        String exits = "";
+        String split=System.lineSeparator();
+        exits="You are " + description;
+        exits=exits+split;
+        exits=exits+"Exits: ";
+        
+        for (String direction:POSSIBLE_DIRECTIONS){
+            if(getExit(direction)!=null){
+                exits=exits+direction+" ";
+            }
+        }
+        
+        return exits;
+    }
+    
     /**
      * @return The description of the room.
      */

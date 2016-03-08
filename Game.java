@@ -34,7 +34,7 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room outside, theater, pub, lab, office, supply, toilet;
       
         // create the rooms
         outside = new Room("outside the main entrance of the university");
@@ -42,14 +42,24 @@ public class Game
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
+        supply = new Room("in the supply closet");
+        toilet = new Room("in the toilets");
         
         // initialise room exits
-        outside.setExits(null, theater, lab, pub);
-        theater.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        lab.setExits(outside, office, null, null);
-        office.setExits(null, null, null, lab);
-
+        outside.setExits(null, theater, lab, pub, null, null);      //east=theater, south=lab, west=pub
+        theater.setExits(null, null, null, outside, null, null);    //west=outside
+        pub.setExits(toilet, outside, null, null, null, null);      //north=toilet, east=outside
+        lab.setExits(outside, office, supply, null, null, null);    //north=outside, east=office, south=supply
+        office.setExits(null, null, null, lab, null, null);         //west=lab
+        supply.setExits(lab,null,null,null, null, null);            //north=lab
+        toilet.setExits(null, null, pub, null, null, null);            //south=pub
+        
+        //
+        //[toi]
+        //[pub] [out] [the]
+        //      [lab] [off]
+        //      [sup]
+        
         currentRoom = outside;  // start game outside
     }
 
@@ -81,21 +91,7 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println("You are " + currentRoom.getDescription());
-        System.out.print("Exits: ");
-        if(currentRoom.northExit != null) {
-            System.out.print("north ");
-        }
-        if(currentRoom.eastExit != null) {
-            System.out.print("east ");
-        }
-        if(currentRoom.southExit != null) {
-            System.out.print("south ");
-        }
-        if(currentRoom.westExit != null) {
-            System.out.print("west ");
-        }
-        System.out.println();
+        printLocationInfo();
     }
 
     /**
@@ -159,16 +155,16 @@ public class Game
         // Try to leave current room.
         Room nextRoom = null;
         if(direction.equals("north")) {
-            nextRoom = currentRoom.northExit;
+            nextRoom = currentRoom.getExit("north");
         }
         if(direction.equals("east")) {
-            nextRoom = currentRoom.eastExit;
+            nextRoom = currentRoom.getExit("east");
         }
         if(direction.equals("south")) {
-            nextRoom = currentRoom.southExit;
+            nextRoom = currentRoom.getExit("south");
         }
         if(direction.equals("west")) {
-            nextRoom = currentRoom.westExit;
+            nextRoom = currentRoom.getExit("west");
         }
 
         if (nextRoom == null) {
@@ -176,21 +172,25 @@ public class Game
         }
         else {
             currentRoom = nextRoom;
-            System.out.println("You are " + currentRoom.getDescription());
-            System.out.print("Exits: ");
-            if(currentRoom.northExit != null) {
-                System.out.print("north ");
-            }
-            if(currentRoom.eastExit != null) {
-                System.out.print("east ");
-            }
-            if(currentRoom.southExit != null) {
-                System.out.print("south ");
-            }
-            if(currentRoom.westExit != null) {
-                System.out.print("west ");
-            }
-            System.out.println();
+            printLocationInfo();
+        }
+    }
+    
+    /**
+     * Prints the description and directions for the current room
+     */
+    private void printLocationInfo(){
+        System.out.println(currentRoom.getExitString());
+    }
+    
+    /**
+     * A compression of the code in printLocationInfo
+     * prints out the direction given iff there is a room in that location
+     * Would preferably store a list of possible directions and just have printLoc loop through them
+     */
+    private void printIfExit(String direction){
+        if(currentRoom.getExit(direction) != null) {
+            System.out.print(direction+" ");
         }
     }
 
