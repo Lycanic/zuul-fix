@@ -21,6 +21,7 @@ public class Room
     private String description;
     private HashMap<String,Room> exits;
     private ArrayList<Item> items;
+    private ArrayList<Person> people;
 
     /**
      * Create a room described "description". Initially, it has
@@ -33,6 +34,7 @@ public class Room
         this.description = description;
         exits = new HashMap<String,Room>();
         items = new ArrayList<Item>();
+        people = new ArrayList<Person>();
     }
     
     /**
@@ -47,6 +49,14 @@ public class Room
      */
     public void addItem(Item item){
         items.add(item);
+    }
+
+    /**
+     * adds a Person to the room
+     */
+    public void addPerson(Person person){
+        people.add(person);
+
     }
 
     /**
@@ -76,6 +86,22 @@ public class Room
         String doors;
         String split=System.lineSeparator();
         doors="You are " + description;
+        if (items.size()+people.size()>0) {
+            doors = doors+split + "You can see: ";
+            if (items.size()>0){
+                doors=doors+split;
+                for (Item item: items){
+                    doors = doors+item.getName() + " ";
+                }
+            }
+            if(people.size()>0){
+                doors = doors+split;
+                for (Person person:people){
+                    doors=doors+person.getName() + " ";
+                }
+            }
+        }
+
         doors=doors+split;
         doors=doors+"Exits: ";
         

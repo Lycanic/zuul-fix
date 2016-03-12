@@ -22,6 +22,8 @@ public class Game
     private Parser parser;
     private Room currentRoom;
     private ArrayList<Room> rooms;
+    private ArrayList<Item> items;
+    private ArrayList<Person> people;
         
     /**
      * Create the game and initialise its internal map.
@@ -29,7 +31,9 @@ public class Game
     public Game() 
     {
         rooms = new ArrayList<Room>();
-        createRooms();
+        items=new ArrayList<Item>();
+        people=new ArrayList<Person>();
+        setupRooms();
         parser = new Parser();
     }
 
@@ -46,9 +50,9 @@ public class Game
     }
 
     /**
-     * Create all the rooms and link their exits together.
+     * Create all the rooms & associated items & people and link their exits together.
      */
-    private void createRooms()
+    private void setupRooms()
     {
         Room bar, mainCorridor, passage, lift0, lift1, lift2, lift3, janitor, infirm, intern, shower, supply, cryptozoo, dark, vault;
         
@@ -91,6 +95,7 @@ public class Game
         lift1.addExit(north, intern);
         lift2.addExit(up,lift1);
         lift2.addExit(down,lift3);
+        lift2.addExit(north, dark);
         janitor.addExit(west, mainCorridor);
         infirm.addExit(south, intern);
         intern.addExit(north, infirm);
@@ -100,8 +105,9 @@ public class Game
         shower.addExit(east,intern);
         supply.addExit(west,intern);
         cryptozoo.addExit(south,mainCorridor);
-
-        Item orb, ritualBook, mysteriousKey, requisitionCyclinder, paperwork, bottle, jarOfBees, bagOfSand, brokenMirror;
+        dark.addExit(south, lift2);
+        vault.addExit("north-east",mainCorridor);
+        vault.addExit("south-east",passage);
 
         rooms.add(bar);
         rooms.add(mainCorridor);
@@ -118,14 +124,56 @@ public class Game
         rooms.add(dark);
         rooms.add(vault);
 
+        Person briar, barkeep, scruffy;
+
+        briar = new Person("Mr Briar");
+        barkeep = new Person("The Barkeep");
+        scruffy = new Person("Scruffy the Janitor");
+
+        Item orb, ritualBook, mysteriousKey, requisitionCylinder, paperwork, bottle, jarOfBees, bagOfSand, brokenMirror;
+
+        orb=new Item("orb","a faintly glowing orb");
+        ritualBook = new Item("book of Rituals", "a book filled with rituals");
+        mysteriousKey = new Item("key", "a strangely shaped key");
+        requisitionCylinder = new Item("requisition case","used to requisition items from within the department");
+        paperwork = new Item("paperwork","some form for requisitioning items, it's empty");
+        bottle = new Item("bottle", "a bottle filled with some strange liquid");
+        jarOfBees = new Item("jar", "there's a weird buzzing coming from it");
+        bagOfSand = new Item("bag", "a small bag, filled with a fine sand");
+        brokenMirror = new Item("broken mirror", "an old hand mirror, shattered across the surface");
+
+        barkeep.giveItem(bottle);
+        briar.giveItem(mysteriousKey);
+        scruffy.giveItem(paperwork);
+
+        bar.addPerson(barkeep);
+        janitor.addPerson(scruffy);
+        passage.addPerson(briar);
+
+        bar.addItem(requisitionCylinder);
+        cryptozoo.addItem(jarOfBees);
+        supply.addItem(orb);
+        supply.addItem(bagOfSand);
+        shower.addItem(brokenMirror);
+
+        items.add(orb);
+        items.add(ritualBook);
+        items.add(mysteriousKey);
+        items.add(requisitionCylinder);
+        items.add(paperwork);
+        items.add(bottle);
+        items.add(jarOfBees);
+        items.add(bagOfSand);
+        items.add(brokenMirror);
+
+        people.add(briar);
+        people.add(barkeep);
+        people.add(scruffy);
+
 
         currentRoom = bar;  // start game in the bar
     }
 
-    private void createItems() {
-
-
-    }
 
     /**
      *  Main play routine.  Loops until end of play.

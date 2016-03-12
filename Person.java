@@ -10,15 +10,20 @@ public class Person {
 
     /**
      * create a Person
-     * @param name
+     * @param name the name of the person
      */
     public Person(String name){
         this.name=name;
+        items=new ArrayList<Item>();
+    }
+
+    public String getName(){
+        return name;
     }
 
     /**
      * Gives the Person the specified item
-     * @param item
+     * @param item the item to give the person
      */
     public boolean giveItem(Item item) {
         return items.add(item);
@@ -26,7 +31,7 @@ public class Person {
 
     /**
      * takes the specified item from the Person
-     * @param item
+     * @param item the item to take
      */
     public boolean takeItem(Item item){
         return items.remove(item);

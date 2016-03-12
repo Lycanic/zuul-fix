@@ -19,6 +19,12 @@ public class Item
         this.name=name;
     }
 
+    public Item(String name, String description)
+    {
+        this.name=name;
+        this.description = description;
+    }
+
     public void setDescription(String description){
         this.description=description;
     }
@@ -31,7 +37,7 @@ public class Item
         return name;
     }
     
-    public void setName(String name){
-        this.name=name;
+    public void setName(String name) {
+        this.name = name;
     }
 }
