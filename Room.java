@@ -20,6 +20,7 @@ public class Room
 {
     private String description;
     private HashMap<String,Room> exits;
+    private ArrayList<Item> items;
 
     /**
      * Create a room described "description". Initially, it has
@@ -31,6 +32,7 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<String,Room>();
+        items = new ArrayList<Item>();
     }
     
     /**
@@ -40,6 +42,13 @@ public class Room
         exits.put(direction,destination);
     }
 
+    /**
+     * adds an item in the room
+     */
+    public void addItem(Item item){
+        items.add(item);
+    }
+    
     /**
      * @return the Room in the specified direction
      */
@@ -55,7 +64,7 @@ public class Room
      * Prints the description and directions for the current room
      */
     public String getExitString(){
-        String doors = "";
+        String doors;
         String split=System.lineSeparator();
         doors="You are " + description;
         doors=doors+split;

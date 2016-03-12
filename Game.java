@@ -31,51 +31,77 @@ public class Game
         parser = new Parser();
     }
 
+
+    /**
+     * The main playable method of the Game
+     *
+     * @param args
+     */
+    public void main(String[] args){
+        Game game = new Game();
+        game.play();
+
+    }
+
     /**
      * Create all the rooms and link their exits together.
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office, supply, toilet, attic, basement;
-      
-        // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-        supply = new Room("in the supply closet");
-        toilet = new Room("in the toilets");
-        attic = new Room("in the pub's attic");
-        basement = new Room("in the secret basement");
+        Room bar, mainCorridor, passage, lift0, lift1, lift2, lift3, janitor, infirm, intern, shower, supply, cryptozoo, dark, vault, myth;
+        
+        String west = "west";
+        String east = "east";
+        String north = "north";
+        String south = "south";
+        String up = "up";
+        String down = "down";
+        
+        bar = new Room("in the break room of the DoP");
+        mainCorridor = new Room("in the main corridor");
+        passage = new Room("in the passage between the bar and the vaults");
+        lift0=new Room("in the lift, on the top floor");
+        lift1 = new Room("in the lift, on the middle floor");
+        lift2 = new Room("in the lift, on the bottom floor");
+        lift3= new Room("dropping from the incinerator chute");
+        janitor = new Room("in the janitor's closet. It's spotless");
+        infirm = new Room("in the infirmary");
+        intern = new Room("in the intern rooms");
+        shower = new Room("in the intern shower room");
+        supply = new Room("in the intern supply closet");
+        cryptozoo = new Room("in the cryptozoology main room");
+        dark = new Room("in a very dark room");
+        vault = new Room("in the departmental vaults");
+        myth = new Room("in a dark, mysteriously creepy area of the department");
+        
+        bar.addExit(north, mainCorridor);
+        bar.addExit(west, passage);
+        mainCorridor.addExit(south, bar);
+        mainCorridor.addExit("south-west",lift0);
+        mainCorridor.addExit(west, vault);
+        mainCorridor.addExit(east, janitor);
+        mainCorridor.addExit(north, cryptozoo);
+        passage.addExit(east,bar);
+        passage.addExit(west,vault);
+        lift0.addExit(north, mainCorridor);
+        lift0.addExit(down, lift1);
+        lift1.addExit(down, lift2);
+        lift1.addExit(up, lift0);
+        lift1.addExit(north, intern);
+        lift2.addExit(up,lift1);
+        lift2.addExit(down,lift3);
+        janitor.addExit(west, mainCorridor);
+        infirm.addExit(south, intern);
+        intern.addExit(north, infirm);
+        intern.addExit(east, supply);
+        intern.addExit(west,shower);
+        intern.addExit(south,lift1);
+        shower.addExit(east,intern);
+        supply.addExit(west,intern);
+        cryptozoo.addExit(south,mainCorridor);
         
         
-        // initialise room exits
-        outside.addExit("east", theater);
-        outside.addExit("south", lab);
-        outside.addExit("west", pub);
-        theater.addExit("west", outside);
-        pub.addExit("north", toilet);
-        pub.addExit("east",outside);
-        pub.addExit("up", attic);
-        lab.addExit("north",outside);
-        lab.addExit("east",office);
-        lab.addExit("south",supply);
-        office.addExit("west", lab); 
-        supply.addExit("north", lab);
-        supply.addExit("down", basement);
-        toilet.addExit("south", pub);  
-        attic.addExit("down", pub);      
-        basement.addExit("up", supply); 
-        
-                
-        //
-        //   [toi]
-        //[a][pub]  [out]   [the]
-        //          [lab]   [off]
-        //          [sup][b]
-        
-        currentRoom = outside;  // start game outside
+        currentRoom = bar;  // start game outside
     }
 
     /**
@@ -102,8 +128,8 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("Welcome to the Department of Peculiarities!");
+        System.out.println("You are a young intern, freshly brought in from the streets.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         printLocationInfo();
@@ -146,8 +172,8 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You have been left to explore");
+        System.out.println("the Department of Peculiarities.");
         System.out.println();
         System.out.println("Your command words are:");
         System.out.println("   go quit help");
@@ -171,7 +197,7 @@ public class Game
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("There is no door!");
+            System.out.println("There is nothing there!");
         }
         else {
             currentRoom = nextRoom;
@@ -184,17 +210,6 @@ public class Game
      */
     private void printLocationInfo(){
         System.out.println(currentRoom.getExitString());
-    }
-    
-    /**
-     * A compression of the code in printLocationInfo
-     * prints out the direction given iff there is a room in that location
-     * Would preferably store a list of possible directions and just have printLoc loop through them
-     */
-    private void printIfExit(String direction){
-        if(currentRoom.getExit(direction) != null) {
-            System.out.print(direction+" ");
-        }
     }
 
     /** 
