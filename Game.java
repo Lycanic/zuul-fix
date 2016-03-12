@@ -21,12 +21,14 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    private ArrayList<Room> rooms;
         
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
+        rooms = new ArrayList<Room>();
         createRooms();
         parser = new Parser();
     }
@@ -37,7 +39,7 @@ public class Game
      *
      * @param args
      */
-    public void main(String[] args){
+    public static void main(String[] args){
         Game game = new Game();
         game.play();
 
@@ -48,7 +50,7 @@ public class Game
      */
     private void createRooms()
     {
-        Room bar, mainCorridor, passage, lift0, lift1, lift2, lift3, janitor, infirm, intern, shower, supply, cryptozoo, dark, vault, myth;
+        Room bar, mainCorridor, passage, lift0, lift1, lift2, lift3, janitor, infirm, intern, shower, supply, cryptozoo, dark, vault;
         
         String west = "west";
         String east = "east";
@@ -72,7 +74,6 @@ public class Game
         cryptozoo = new Room("in the cryptozoology main room");
         dark = new Room("in a very dark room");
         vault = new Room("in the departmental vaults");
-        myth = new Room("in a dark, mysteriously creepy area of the department");
         
         bar.addExit(north, mainCorridor);
         bar.addExit(west, passage);
@@ -99,9 +100,31 @@ public class Game
         shower.addExit(east,intern);
         supply.addExit(west,intern);
         cryptozoo.addExit(south,mainCorridor);
-        
-        
-        currentRoom = bar;  // start game outside
+
+        Item orb, ritualBook, mysteriousKey, requisitionCyclinder, paperwork, bottle, jarOfBees, bagOfSand, brokenMirror;
+
+        rooms.add(bar);
+        rooms.add(mainCorridor);
+        rooms.add(passage);
+        rooms.add(lift0);
+        rooms.add(lift1);
+        rooms.add(lift2);
+        rooms.add(janitor);
+        rooms.add(infirm);
+        rooms.add(intern);
+        rooms.add(shower);
+        rooms.add(supply);
+        rooms.add(cryptozoo);
+        rooms.add(dark);
+        rooms.add(vault);
+
+
+        currentRoom = bar;  // start game in the bar
+    }
+
+    private void createItems() {
+
+
     }
 
     /**

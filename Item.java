@@ -1,6 +1,6 @@
 
 /**
- * Write a description of class Item here.
+ * Represents an Item within the game.
  * 
  * @author (your name) 
  * @version (a version number or a date)
@@ -9,7 +9,6 @@ public class Item
 {
     private String name;
     private String description;
-    private boolean used;
     
     
     /**
@@ -18,7 +17,6 @@ public class Item
     public Item(String name)
     {
         this.name=name;
-        used=false;
     }
 
     public void setDescription(String description){
@@ -26,10 +24,6 @@ public class Item
     }
     
     public String toString(){
-        if (used){
-            return "A " + name + " (used)" + ", "+description;
-        }
-        
         return "A " + name + ", "+description;
     }
     
@@ -39,13 +33,5 @@ public class Item
     
     public void setName(String name){
         this.name=name;
-    }
-    
-    public void useItem(){
-        used=true;
-    }
-    
-    public void restoreItem(){
-        used=false;
     }
 }

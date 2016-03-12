@@ -48,6 +48,15 @@ public class Room
     public void addItem(Item item){
         items.add(item);
     }
+
+    /**
+     * takes an item from the room
+     * @param item the item to remove
+     */
+    public void removeItem(Item item){
+        items.remove(item);
+
+    }
     
     /**
      * @return the Room in the specified direction
@@ -71,9 +80,7 @@ public class Room
         doors=doors+"Exits: ";
         
         for (String direction:exits.keySet()){
-            if(getExit(direction)!=null){
-                doors=doors+direction+" ";
-            }
+            doors=doors+direction+" ";
         }
         return doors;
     }
