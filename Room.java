@@ -51,12 +51,30 @@ public class Room
         items.add(item);
     }
 
+    public Item getItem(String itemName){
+        for (Item item: items){
+            if (item.getName().equals(itemName)){
+                return item;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * adds a Person to the room
      */
     public void addPerson(Person person){
         people.add(person);
+    }
 
+    public Person getPerson(String name){
+        for (Person person: people){
+            if(person.getName().equalsIgnoreCase(name)){
+                return person;
+            }
+        }
+        return null;
     }
 
     /**
