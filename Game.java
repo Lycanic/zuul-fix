@@ -24,6 +24,7 @@ public class Game
     private ArrayList<Room> rooms;
     private ArrayList<Item> items;
     private ArrayList<Person> people;
+    private Player player;
         
     /**
      * Create the game and initialise its internal map.
@@ -37,6 +38,9 @@ public class Game
         parser = new Parser();
     }
 
+    public void enterPlayer(String name){
+        player = new Player(name);
+    }
 
     /**
      * The main playable method of the Game
@@ -69,7 +73,7 @@ public class Game
         lift0=new Room("in the lift, on the top floor");
         lift1 = new Room("in the lift, on the middle floor");
         lift2 = new Room("in the lift, on the bottom floor");
-        lift3= new Room("dropping from the incinerator chute");
+        lift3= new Room("dropping from the incinerator chute. You briefly contemplate the decisions that lead you here before you perish in fire");
         janitor = new Room("in the janitor's closet. It's spotless");
         infirm = new Room("in the infirmary");
         intern = new Room("in the intern rooms");
@@ -126,21 +130,21 @@ public class Game
 
         Person briar, barkeep, scruffy;
 
-        briar = new Person("Mr Briar");
-        barkeep = new Person("The Barkeep");
-        scruffy = new Person("Scruffy the Janitor");
+        briar = new Person("Briar");
+        barkeep = new Person("Barkeep");
+        scruffy = new Person("Scruffy");
 
         Item orb, ritualBook, mysteriousKey, requisitionCylinder, paperwork, bottle, jarOfBees, bagOfSand, brokenMirror;
 
         orb=new Item("orb","a faintly glowing orb");
-        ritualBook = new Item("book of Rituals", "a book filled with rituals");
+        ritualBook = new Item("book", "a book filled with rituals");
         mysteriousKey = new Item("key", "a strangely shaped key");
-        requisitionCylinder = new Item("requisition case","used to requisition items from within the department");
+        requisitionCylinder = new Item("cylinder","used to requisition items from within the department");
         paperwork = new Item("paperwork","some form for requisitioning items, it's empty");
         bottle = new Item("bottle", "a bottle filled with some strange liquid");
-        jarOfBees = new Item("jar", "there's a weird buzzing coming from it");
+        jarOfBees = new Item("jar", "a small jar. There's a weird buzzing coming from it");
         bagOfSand = new Item("bag", "a small bag, filled with a fine sand");
-        brokenMirror = new Item("broken mirror", "an old hand mirror, shattered across the surface");
+        brokenMirror = new Item("mirror", "an old hand mirror, shattered across the surface");
 
         barkeep.giveItem(bottle);
         briar.giveItem(mysteriousKey);
@@ -179,7 +183,8 @@ public class Game
      *  Main play routine.  Loops until end of play.
      */
     public void play() 
-    {            
+    {
+        player = new Player("Intern"); //Ideally this would be input, however the parser currently does not allow for this easily
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
@@ -202,6 +207,7 @@ public class Game
         System.out.println("Welcome to the Department of Peculiarities!");
         System.out.println("You are a young intern, freshly brought in from the streets.");
         System.out.println("Type 'help' if you need help.");
+
         System.out.println();
         printLocationInfo();
     }
@@ -227,6 +233,12 @@ public class Game
         else if (commandWord.equals("go")) {
             goRoom(command);
         }
+        else if (commandWord.equals("take")){
+            takeItem(command);
+        }
+        else if (commandWord.equals("talk")) {
+            talkTo(command);
+        }
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
@@ -235,6 +247,7 @@ public class Game
     }
 
     // implementations of user commands:
+
 
     /**
      * Print out some help information.
@@ -247,7 +260,7 @@ public class Game
         System.out.println("the Department of Peculiarities.");
         System.out.println();
         System.out.println("Your command words are:");
-        System.out.println("   go quit help");
+        System.out.println(CommandWords.getCommandList());
     }
 
     /** 
@@ -275,7 +288,88 @@ public class Game
             printLocationInfo();
         }
     }
-    
+
+    /**
+     * try to take the requested item
+     * @param command the command entered
+     */
+    private void takeItem(Command command){
+        String itemName = command.getSecondWord();
+        Item item = currentRoom.getItem(itemName);
+        if (item!=null){
+            if (player.giveItem(item)){
+                currentRoom.removeItem(item);
+                System.out.println("You pick up the "+itemName);
+                System.out.println("It seems to be " + item.getDescription());
+            } else{
+                System.out.println("You have no room in your bag!");
+            }
+        } else{
+            System.out.println("You can't find that...");
+        }
+    }
+
+    /**
+     * Initiates a conversation with the stated Person
+     * @param command the command used
+     */
+    private void talkTo(Command command){
+        String request = command.getSecondWord();
+        if (currentRoom.getPerson(request)!=null) {
+            if (request.equalsIgnoreCase("briar")) {
+                talkBriar(); //this is really bad coding, but I can't actually figure out a different way to get the text correct and with the correct trigger conditions
+            } else if (request.equalsIgnoreCase("barkeep")) {
+                //talkBarkeep();
+            } else if (request.equalsIgnoreCase("scruffy")) {
+                //talkScruffy();
+            }
+        }
+        else {
+            System.out.println("You can't find that person");
+        }
+    }
+
+    /**
+     * the specific dialogue options from talking to Mr Briar
+     */
+    private void talkBriar(){
+        Item brokenMirror = retrieveItem("mirror");
+        Item mysteriousKey = retrieveItem("key");
+        Person briar = retrievePerson("briar");
+        if (player.takeItem(brokenMirror)){
+            System.out.println("Mr Briar seems interested in the mirror you have, and you give it to him");
+            briar.giveItem(brokenMirror);
+        }
+        if (briar.hasItem(brokenMirror) && briar.hasItem(mysteriousKey)){
+            System.out.println("Mr Briar wants to give you a present");
+            if (player.giveItem(mysteriousKey)){
+                System.out.println("He gives you a strange key");
+                briar.takeItem(mysteriousKey);
+            }
+        } else {
+            System.out.println("Mr Briar nods as you pass");
+        }
+    }
+
+    private Item retrieveItem(String name){
+        for (Item item: items){
+            if (item.getName().equals(name)){
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private Person retrievePerson(String name){
+        for (Person person: people){
+            if (person.getName().equalsIgnoreCase(name)){
+                return person;
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Prints the description and directions for the current room
      */

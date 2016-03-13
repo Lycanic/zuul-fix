@@ -28,6 +28,10 @@ public class Item
     public void setDescription(String description){
         this.description=description;
     }
+
+    public String getDescription(){
+        return description;
+    }
     
     public String toString(){
         return "A " + name + ", "+description;

@@ -37,6 +37,9 @@ public class Person {
         return items.remove(item);
     }
 
+    public boolean hasItem(Item item){
+        return items.contains(item);
+    }
 
 
 
